@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" ondragstart="return false">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>旋转相册</title> 
+    <style>
+        body{
+            margin: 0;
+            background: #000;
+            overflow: hidden;
+        }
+        #pers{
+            perspective: 1000px; /*景深*/
+        }
+        #wrap{
+            position: relative;
+            width: 150px;
+            height: 200px;
+            margin: 200px auto;
+            transform-style: preserve-3d;/*设计3D场景风格*/
+            transform: rotateX(-20deg) rotateY(0deg);/*旋转的度数*/
+        }
+        #wrap img{
+            position: absolute;
+            width: 150px;
+            height: 200px;
+            box-shadow:0px 5px 5px pink;
+            -webkit-box-reflect: below 0px 
+            -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(255, 0, 0, 0.7)));
+     }
+    </style>
+</head>
+<body>
+    <div id="pers">
+        <div id="wrap">
+            <img src="images/img1.jpg" alt="">
+            <img src="images/img2.jpg" alt="">
+            <img src="images/img3.jpg" alt="">
+            <img src="images/img4.jpg" alt="">
+            <img src="images/img5.jpg" alt="">
+            <img src="images/img6.jpg" alt="">
+            <img src="images/img7.jpg" alt="">
+            <img src="images/img8.jpg" alt="">
+            <img src="images/img9.jpg" alt="">
+            <img src="images/img10.jpg" alt="">
+        </div>
+    </div>
+</body>
+<script>
+    var oImg = document.getElementsByTagName("img");
+
+    var length = oImg.length;
+
+    var deg = 360/length;/*每张图片旋转的度数*/
+    
+    var oWrap = document.getElementById("wrap");
+
+    //页面内容加载完毕 之后，再执行的JS代码
+    window.onload = function(){
+
+        Array.prototype.forEach.call(oImg,function(ele,index,self){
+            ele.style.transform = "rotateY("+deg*index+"deg) translateZ(350px)";
+            ele.style.transition = "1s " + (length - index)*0.1 + "s";
+        });
+    }
+    //鼠标点击事件
+    var newX,newY,lastX,lastY,minusX,minusY,rotX = -20,rotY = 0;
+
+    document.onmousedown = function(e){
+        //第一次旧的值产生于第一次点击的时候
+        lastX = e.clientX;
+        lastY = e.clientY;
+        
+        this.onmousemove = function(e){
+            //鼠标移动事件
+            newX = e.clientX;
+            newY = e.clientY;
+           // 假设 已经求出了这个值
+            minusX = newX - lastX;
+            minusY = newY - lastY;
+
+            //差值累加成一个新的旋转度数值
+            rotX -= minusY*0.2;
+            rotY += minusX*0.1;
+            oWrap.style.transform = "rotateX("+rotX+"deg)rotateY("+rotY+"deg)";
+            
+            //新的位置值在用完之后  就变成了旧的值  提供下一次使用
+            newX = lastX;
+            newY = lastY;
+        }
+        this.onmouseup = function(e){
+            //鼠标松开事件
+            this.onmousemove = null; //清除鼠标移动事件
+        }
+    }
+</script>
+</html>
